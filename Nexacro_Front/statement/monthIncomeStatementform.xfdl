@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FDL version="2.1">
+  <Form id="monthIncomeStatement" width="1280" height="720" titletext="New Form" onload="monthIncomeStatement_onload">
+    <Layouts>
+      <Layout height="720" mobileorientation="landscape" width="1280">
+        <Calendar id="calendar_end_date" taborder="1" left="520.00" top="96" width="175" height="40" onchanged="calendar_end_date_onchanged"/>
+        <Button id="Button00" taborder="0" text="조회" left="730.00" top="96" width="68" height="40" background="#5170ad" color="aliceblue" borderRadius="5px" textAlign="center" onclick="Button00_onclick"/>
+        <Static id="Static01_02" taborder="2" text="" left="39.00" top="19" width="230" height="60" onclick="Static01_onclick" background="#5170ad" borderRadius="0px" font="normal 10pt/normal &quot;함초롬돋움&quot;"/>
+        <Static id="Static00_00" taborder="3" text="기간별손익계산서" left="54.00" top="29" width="200" height="45" onclick="Static00_onclick" textAlign="center" font="normal 700 18pt/normal &quot;함초롬돋움&quot;" border="3px none #000000" background="transparent" borderRadius="0px" color="#fcfbfd"/>
+        <Calendar id="calendar_start_date" taborder="4" left="279.00" top="96" width="175" height="40" onchanged="calendar_start_date_onchanged"/>
+        <Static id="Static00" taborder="5" text="-" left="27.11%" top="11.67%" width="2.11%" height="3.06%" textAlign="center" font="bold 20px/normal &quot;Gulim&quot;" onclick="Static00_onclick"/>
+        <Grid id="Grid00" taborder="6" left="272" top="165" width="556" height="405" binddataset="ds_mincomeStatement">
+          <Formats>
+            <Format id="default">
+              <Columns>
+                <Column size="270"/>
+                <Column size="285"/>
+              </Columns>
+              <Rows>
+                <Row size="24" band="head"/>
+                <Row size="24"/>
+              </Rows>
+              <Band id="head">
+                <Cell text="과목"/>
+                <Cell col="1" text="합계"/>
+              </Band>
+              <Band id="body">
+                <Cell text="bind:ACCOUNT_NAME"/>
+                <Cell col="1" text="bind:INCOME_SUMMARY"/>
+              </Band>
+            </Format>
+          </Formats>
+        </Grid>
+      </Layout>
+    </Layouts>
+    <Script type="xscript5.1"><![CDATA[include "scripts::commonDate.xjs";
+include "scripts::commonOpen.xjs";
+application = nexacro.getApplication();
+
+
+//결산및재무제표 권한의 코드는 AU03이다. 장부관리 권한이 있으면 화면을 보여주고 그렇지 않으면 화면을 보여주지 않음.
+ if(application.gds_authority_emp.findRow("AUTHORITY_CODE", "AU03")==-1){
+			alert('현재 귀하의 계정은 해당 기능 또는 화면에 액세스할 권한이 없습니다.');
+			obj.set_visible(false);
+}
+
+
+//조회 버튼 클릭
+this.Button00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo){
+		var startDate = this.calendar_start_date.value;
+		var endDate = this.calendar_end_date.value;
+		
+ 		var sYear = startDate.toString().substring(0,4);
+ 		var sMonth = startDate.toString().substring(4,6);
+ 		var sDay = startDate.toString().substring(6,8);	
+ 		var sDate = sYear+"-"+sMonth+"-"+sDay;
+		
+		var eYear = endDate.toString().substring(0,4);
+ 		var eMonth = endDate.toString().substring(4,6);
+ 		var eDay = endDate.toString().substring(6,8);	
+ 		var eDate = eYear+"-"+eMonth+"-"+eDay;
+		
+		trace(sDate, eDate);
+		//trace(eYear, eMonth, eDay, eDate);
+		
+		var id = "monthIncomeStatement";
+		var url = "svcStatement::monthIncome";
+		var reqData= "";
+		var resData  = "ds_mincomeStatement=ds_mincomeStatement";
+		var args = "startDate='"+sDate+"' endDate='"+eDate+"'";
+		var callback = "callback";
+		
+		this.transaction(id, url, reqData, resData, args, callback);
+};
+
+]]></Script>
+    <Objects>
+      <Dataset id="ds_mincomeStatement">
+        <ColumnInfo>
+          <Column id="ACCOUNT_NAME" type="STRING" size="256"/>
+          <Column id="INCOME_SUMMARY" type="STRING" size="256"/>
+        </ColumnInfo>
+        <Rows>
+          <Row/>
+        </Rows>
+      </Dataset>
+      <!--
+      <Dataset id="Dataset00">
+        <ColumnInfo>
+          <Column id="YEAR" type="STRING" size="20"/>
+          <Column id="MONTH" type="STRING" size="20"/>
+          <Column id="SALES_SUMMARY" type="INT" size="256"/>
+          <Column id="SALES_COST_SUMMARY" type="INT" size="256"/>
+          <Column id="GROSS_MARGIN" type="INT" size="256"/>
+          <Column id="SALES_MANAGE_COST_SUMMARY" type="INT" size="256"/>
+          <Column id="OPERATING_PROFIT" type="INT" size="256"/>
+          <Column id="NON_OPERATING_PROFIT_SUMMARY" type="INT" size="256"/>
+          <Column id="NON_OPERATING_COST_SUMMARY" type="INT" size="256"/>
+          <Column id="ORDINARY_PROFIT" type="INT" size="256"/>
+          <Column id="CORPORATE_TAX_SUMMARY" type="INT" size="256"/>
+          <Column id="NET_INCOME" type="INT" size="256"/>
+        </ColumnInfo>
+-->
+      <!--
+        <Rows>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">1</Col>
+            <Col id="SALES_SUMMARY">530000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">53000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">78452000</Col>
+            <Col id="OPERATING_PROFIT">451548000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">400000</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">451948000</Col>
+            <Col id="NET_INCOME">451948000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">2</Col>
+            <Col id="SALES_SUMMARY">-36120000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">-36120000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">106560000</Col>
+            <Col id="OPERATING_PROFIT">-142680000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">-142680000</Col>
+            <Col id="NET_INCOME">-142680000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">3</Col>
+            <Col id="SALES_SUMMARY">780000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">780000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">399508000</Col>
+            <Col id="OPERATING_PROFIT">380492000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">380492000</Col>
+            <Col id="NET_INCOME">380492000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">4</Col>
+            <Col id="SALES_SUMMARY">320000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">32000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">440080000</Col>
+            <Col id="OPERATING_PROFIT">-112008000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">-120080000</Col>
+            <Col id="NET_INCOME">-120080000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">5</Col>
+            <Col id="SALES_SUMMARY">972000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">9720000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">22460000</Col>
+            <Col id="OPERATING_PROFIT">74740000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">747400000</Col>
+            <Col id="NET_INCOME">747400000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">6</Col>
+            <Col id="SALES_SUMMARY">72000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">720000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">450960000</Col>
+            <Col id="OPERATING_PROFIT">451548000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">269040000</Col>
+            <Col id="NET_INCOME">269040000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">7</Col>
+            <Col id="SALES_SUMMARY">68000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">680000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">43600000</Col>
+            <Col id="OPERATING_PROFIT">-142680000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">24400000</Col>
+            <Col id="NET_INCOME">244000000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">8</Col>
+            <Col id="SALES_SUMMARY">68000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">680000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">439664400</Col>
+            <Col id="OPERATING_PROFIT">24035220</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">240335600</Col>
+            <Col id="NET_INCOME">240335600</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">9</Col>
+            <Col id="SALES_SUMMARY">116000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">1160000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">42112000</Col>
+            <Col id="OPERATING_PROFIT">73888000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">738880000</Col>
+            <Col id="NET_INCOME">738880000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">10</Col>
+            <Col id="SALES_SUMMARY">73200000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">732000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">179580000</Col>
+            <Col id="OPERATING_PROFIT">55242000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">552420000</Col>
+            <Col id="NET_INCOME">552420000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">11</Col>
+            <Col id="SALES_SUMMARY">42280000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">422800000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">188808000</Col>
+            <Col id="OPERATING_PROFIT">4039920000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">4039920000</Col>
+            <Col id="NET_INCOME">4039920000</Col>
+          </Row>
+          <Row>
+            <Col id="YEAR">2023</Col>
+            <Col id="MONTH">12</Col>
+            <Col id="SALES_SUMMARY">680000000</Col>
+            <Col id="SALES_COST_SUMMARY">0</Col>
+            <Col id="GROSS_MARGIN">680000000</Col>
+            <Col id="SALES_MANAGE_COST_SUMMARY">413440000</Col>
+            <Col id="OPERATING_PROFIT">26656000</Col>
+            <Col id="NON_OPERATING_PROFIT_SUMMARY">0</Col>
+            <Col id="NON_OPERATING_COST_SUMMARY">0</Col>
+            <Col id="CORPORATE_TAX_SUMMARY">0</Col>
+            <Col id="ORDINARY_PROFIT">266560000</Col>
+            <Col id="NET_INCOME">266560000</Col>
+          </Row>
+        </Rows>
+-->
+      <!--   </Dataset>-->
+    </Objects>
+  </Form>
+</FDL>
