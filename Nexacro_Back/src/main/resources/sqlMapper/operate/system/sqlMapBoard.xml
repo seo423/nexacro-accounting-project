@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.seoulit.erp.account.operate.system.dao.BoardDAO">
+
+	<!-- 게시판 조회 -->
+	<select id="findBoardList" resultType="kr.co.seoulit.erp.account.operate.system.entity.BoardEntity">
+		<![CDATA[
+		SELECT ID as id
+			 , TITLE as title
+			 , CONTENTS as contents
+			 , WRITTEN_BY as writtenBy
+			 , WRITE_DATE as writeDate
+			 , UPDATE_DATE_TIME as updateDateTime
+		FROM BOARD
+		ORDER BY write_date DESC    --최근의 데이터를 최상단에 보여주기 위한 정렬
+		]]>
+	</select>
+
+	<!-- 게시글 상세 조회 -->
+	<select id="findBoardDetail" parameterType="String" resultType="kr.co.seoulit.erp.account.operate.system.entity.BoardEntity">
+		<![CDATA[
+		SELECT ID as id
+			 , TITLE as title
+			 , CONTENTS as contents
+			 , WRITTEN_BY as writtenBy
+			 , UPDATE_BY as upDateBy
+			 , WRITE_DATE as writeDate
+			 , UPDATE_DATE_TIME as updateDateTime
+		FROM BOARD
+		WHERE ID = #{id}
+		]]>
+	</select>
+
+	<!-- 게시판 추가 / 수정 -->
+	<update id="mergeBoard" parameterType="kr.co.seoulit.erp.account.operate.system.entity.BoardEntity">
+    <![CDATA[
+		MERGE INTO BOARD B
+			USING (SELECT * FROM DUAL)
+			ON (B.ID = #{id})
+			WHEN MATCHED THEN
+				UPDATE SET B.TITLE = #{title}
+					, B.CONTENTS = #{contents}
+					, B.UPDATE_DATE_TIME = sysdate
+			WHEN NOT MATCHED THEN
+				INSERT (B.ID, B.TITLE, B.CONTENTS, B.WRITTEN_BY, B.WRITE_DATE)
+				VALUES (BOARD_SQ.NEXTVAL
+					, #{title}
+					, #{contents}
+					, #{writtenBy}
+					, sysdate)
+		]]>
+    </update>
+
+	<!-- 게시판 삭제 -->
+	<delete id="deleteBoard" parameterType="String">
+		DELETE FROM BOARD
+		WHERE ID = #{id}
+	</delete>
+
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.seoulit.erp.account.operate.vehicle.dao.VehicleDAO">
+
+    <!-- 업무용차량 전체조회 -->
+    <select id="findVehicleList" resultType="kr.co.seoulit.erp.account.operate.vehicle.entity.VehicleEntity">
+        <![CDATA[
+            SELECT
+                V.VEHICLE_CODE AS VEHICLE_CODE,
+                VEHICLE_NUMBER,
+                VEHICLE_TYPE,
+                V.DEPT_CODE AS DEPT_CODE,
+                V.DEPT_NAME AS DEPT_NAME,
+                V.EMP_CODE AS EMP_CODE,
+                V.EMP_NAME AS EMP_NAME,
+                AVAILABILITY,
+                SUM(VL.DISTANCE) AS DISTANCE,
+                SUM(VL.BUSINESS_DISTANCE) AS BUSINESS_DISTANCE,
+                ROUND((SUM(VL.BUSINESS_DISTANCE)/SUM(VL.DISTANCE))*100, 1) AS BUSINESS_USAGE_RATIO
+            FROM VEHICLE V, VEHICLE_LOGBOOK VL
+            WHERE V.VEHICLE_CODE = VL.VEHICLE_CODE(+)
+            GROUP BY V.VEHICLE_CODE,
+                     VEHICLE_NUMBER,
+                     VEHICLE_TYPE,
+                     V.DEPT_CODE,
+                     V.DEPT_NAME,
+                     V.EMP_CODE,
+                     V.EMP_NAME,
+                     AVAILABILITY
+            ORDER BY V.VEHICLE_CODE
+        ]]>
+    </select>
+
+    <!-- 업무용차량 한개조회 -->
+    <select id="findVehicle" parameterType="String" resultType="kr.co.seoulit.erp.account.operate.vehicle.entity.VehicleEntity">
+        <![CDATA[
+            SELECT *
+            FROM VEHICLE
+            WHERE VEHICLE_CODE = #{vehicleCode}
+        ]]>
+    </select>
+
+    <!-- 업무용차량 추가 / 수정 -->
+    <update id="mergeVehicle" parameterType="kr.co.seoulit.erp.account.operate.vehicle.entity.VehicleEntity">
+        <![CDATA[
+            MERGE INTO VEHICLE V
+                USING (SELECT * FROM DUAL)
+                ON (V.VEHICLE_CODE = #{vehicleCode})
+                WHEN MATCHED THEN
+                    UPDATE SET V.DEPT_CODE = #{deptCode},
+                        V.DEPT_NAME = #{deptName},
+                        V.EMP_CODE = #{empCode},
+                        V.EMP_NAME = #{empName},
+                        V.AVAILABILITY = #{availability}
+                WHEN NOT MATCHED THEN
+                    INSERT (V.VEHICLE_CODE, V.VEHICLE_NUMBER, V.VEHICLE_TYPE, V.DEPT_CODE
+                    , V.DEPT_NAME, V.EMP_CODE, V.EMP_NAME, V.AVAILABILITY)
+                    VALUES ( #{vehicleCode}
+                            , #{vehicleNumber}
+                            , #{vehicleType}
+                            , #{deptCode}
+                            , #{deptName}
+                            , #{empCode}
+                            , #{empName}
+                            , #{availability})
+        ]]>
+  </update>
+
+    <!-- 업무용차량 삭제 -->
+    <delete id="deleteVehicle" parameterType="String">
+        <![CDATA[
+            DELETE FROM VEHICLE
+            WHERE VEHICLE_CODE = #{vehicleCode}
+        ]]>
+    </delete>
+
+</mapper>

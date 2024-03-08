@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Generated at: THU DEC 14 09:48:32 KST 2023-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.seoulit.erp.account.operate.fund.dao.PlanDAO">
+
+    <!-- 당일 마지막 계획번호 조회 -->
+    <select id="getPlanMaxNo" parameterType="String" resultType="String" >
+        <![CDATA[
+            SELECT
+                MAX(PLAN_NO)
+            FROM DAILY_FUND_PLAN
+            WHERE PLAN_NO LIKE '%'||#{today}||'%'
+        ]]>
+    </select>
+
+    <!-- 자금계획 조회 -->
+    <select id="findPlan" parameterType="String" resultType="kr.co.seoulit.erp.account.operate.fund.to.PlanBean" >
+   <![CDATA[
+        SELECT PLAN_NO
+             , PLAN_DATE
+             , FUND_CODE
+             , FUND_NAME
+             , CUSTOMER_CODE
+             , CUSTOMER_NAME
+             , EXPENSE_REPORT
+             , BALANCE_DIVISION
+             , TO_CHAR(PRICE, 'FM999,999,999,999') AS PRICE
+        FROM DAILY_FUND_PLAN
+        WHERE PLAN_DATE BETWEEN #{startDate} AND #{endDate}
+        ]]>
+   </select>
+
+    <!-- 자금계획 추가 -->
+    <select id="insertPlan" parameterType="kr.co.seoulit.erp.account.operate.fund.to.PlanBean" >
+        <![CDATA[
+            INSERT INTO DAILY_FUND_PLAN
+            VALUES (#{planNo}, #{planDate}, #{fundCode}, #{fundName}, #{expenseReport}, #{customerCode}, #{customerName}, #{balanceDivision}, #{price})
+        ]]>
+   </select>
+
+    <!-- 자금계획 수정 -->
+    <update id="updatePlan" parameterType="kr.co.seoulit.erp.account.operate.fund.to.PlanBean">
+   <![CDATA[
+        UPDATE DAILY_FUND_PLAN
+        SET FUND_CODE = #{fundCode}
+          , FUND_NAME = #{fundName}
+          , CUSTOMER_CODE = #{customerCode}
+          , CUSTOMER_NAME = #{customerName}
+          , EXPENSE_REPORT = #{expenseReport}
+          , PRICE = #{price}
+        WHERE PLAN_NO = #{planNo}
+        ]]>
+   </update>
+
+    <!-- 자금계획 삭제 -->
+    <delete id="deletePlan" parameterType="String">
+   <![CDATA[
+        DELETE
+        FROM DAILY_FUND_PLAN
+        WHERE PLAN_NO = #{planNo}
+        ]]>
+   </delete>
+
+</mapper>

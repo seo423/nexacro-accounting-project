@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.seoulit.erp.account.operate.currentAsset.dao.CurrentAssetDAO">
+
+	<resultMap id="assetResult" type="kr.co.seoulit.erp.account.operate.currentAsset.entity.CurrentAssetEntity">
+		<result property="accountCode" column="ACCOUNT_CODE"/>
+		<result property="accountName" column="ACCOUNT_NAME"/>
+		<result property="assetCode" column="ASSET_CODE"/>
+		<result property="assetName" column="ASSET_NAME"/>
+		<result property="progress" column="PROGRESS"/>
+		<result property="finalizeStatus" column="FINALIZE_STATUS"/>
+	</resultMap>
+
+	<resultMap id="depreciationResult" type="kr.co.seoulit.erp.account.operate.currentAsset.entity.CurrentAssetEntity">
+		<result property="accountCode" column="ACCOUNT_CODE"/>
+		<result property="accountName" column="ACCOUNT_NAME"/>
+		<result property="assetCode" column="ASSET_CODE"/>
+		<result property="assetName" column="ASSET_NAME"/>
+		<result property="progress" column="PROGRESS"/>
+		<result property="acquisitionCost" column="ACQUISITION_COST"/>
+		<result property="depreciation" column="DEPRECIATION"/>
+		<result property="bookValue" column="BOOK_VALUE"/>
+		<result property="normalAmortization" column="NORMAL_AMORTIZATION"/>
+		<result property="accumulatedAmortization" column="ACCUMULATED_AMORTIZATION"/>
+		<result property="bookValueEnd" column="BOOK_VALUE_END"/>
+		<result property="acquisitionQuantity" column="ACQUISITION_QUANTITY"/>
+		<result property="changeQuantity" column="CHANGE_QUANTITY"/>
+		<result property="remainQuantity" column="REMAIN_QUANTITY"/>
+	</resultMap>
+
+	<!-- 고정자산 전체 조회 -->
+	<select id="findAssetList" resultMap="assetResult">
+	<![CDATA[
+		SELECT *
+		FROM CURRENT_ASSET
+		ORDER BY PROGRESS
+	]]>
+	</select>
+
+	<!-- 고정자산 상세 조회 -->
+	<select id="findAssetDetail" parameterType="String" resultType="kr.co.seoulit.erp.account.operate.currentAsset.entity.CurrentAssetEntity">
+      <![CDATA[
+		SELECT *
+		FROM CURRENT_ASSET
+		WHERE ASSET_CODE = #{assetCode}
+	  ]]>
+   </select>
+
+	<!-- 고정자산 차량 조회 -->
+	<select id="findCarAsset" resultMap="assetResult">
+	<![CDATA[
+		SELECT *
+		FROM CURRENT_ASSET
+		WHERE ACCOUNT_NAME = '차량운반구'
+		]]>
+	</select>
+
+	<!-- 고정자산 추가 / 수정 -->
+	<update id="mergeAsset" parameterType="kr.co.seoulit.erp.account.operate.currentAsset.entity.CurrentAssetEntity" >
+    <![CDATA[
+		MERGE INTO CURRENT_ASSET A
+			USING (SELECT * FROM DUAL)
+			ON (A.ASSET_CODE = #{assetCode})
+			WHEN MATCHED THEN
+				UPDATE SET A.ASSET_NAME = #{assetName}
+				  , A.PROGRESS = #{progress}
+				  , A.FINALIZE_STATUS = #{finalizeStatus}
+			WHEN NOT MATCHED THEN
+				INSERT (A.ACCOUNT_CODE, A.ACCOUNT_NAME, A.ASSET_CODE
+				    , A.ASSET_NAME, A.PROGRESS, A.FINALIZE_STATUS)
+				VALUES ( #{accountCode}
+				, #{accountName}
+				, #{assetCode}
+				, #{assetName}
+				, REGEXP_REPLACE(#{progress}, '(.{4})(.{2})(.{2})', '\1-\2-\3')
+				, #{finalizeStatus} )
+		]]>
+    </update>
+
+	<!-- 고정자산 삭제 -->
+	<delete id="deleteAsset" parameterType="String">
+   <![CDATA[
+		DELETE
+		FROM CURRENT_ASSET
+		WHERE ASSET_CODE = #{assetCode}
+		]]>
+   </delete>
+
+	<!-- 감가상각비현황 전체조회 -->
+	<select id="findDepreciationList" resultMap="depreciationResult">
+      <![CDATA[
+		SELECT A.ACCOUNT_CODE,
+			   A.ACCOUNT_NAME,
+			   TO_CHAR(SUM(D.ACQUISITION_COST), 'FM999,999,999,999') AS ACQUISITION_COST,
+			   TO_CHAR(SUM(D.DEPRECIATION), 'FM999,999,999,999')  AS DEPRECIATION,
+			   TO_CHAR(SUM(D.BOOK_VALUE), 'FM999,999,999,999') AS BOOK_VALUE,
+			   TO_CHAR(SUM(D.NORMAL_AMORTIZATION), 'FM999,999,999,999') AS NORMAL_AMORTIZATION,
+			   TO_CHAR(SUM(D.ACCUMULATED_AMORTIZATION), 'FM999,999,999,999') AS ACCUMULATED_AMORTIZATION,
+			   TO_CHAR(SUM(D.BOOK_VALUE_END), 'FM999,999,999,999') AS BOOK_VALUE_END
+		FROM CURRENT_ASSET A,
+			 CURRENT_ASSET_DETAIL D
+		WHERE A.ASSET_CODE = D.ASSET_CODE
+		GROUP BY A.ACCOUNT_CODE, A.ACCOUNT_NAME
+		]]>
+    </select>
+
+	<!-- 감가상각비현황 선택조회 -->
+	<select id="selectDepreciationList" parameterType="String" resultMap="depreciationResult">
+    <![CDATA[
+		SELECT A.ASSET_CODE,
+			   A.ASSET_NAME,
+			   TO_CHAR(sum(D.ACQUISITION_COST), 'FM999,999,999,999') AS ACQUISITION_COST,
+			   TO_CHAR(sum(D.DEPRECIATION), 'FM999,999,999,999') AS DEPRECIATION,
+			   TO_CHAR(sum(D.BOOK_VALUE), 'FM999,999,999,999') AS BOOK_VALUE,
+			   TO_CHAR(sum(D.NORMAL_AMORTIZATION), 'FM999,999,999,999') AS NORMAL_AMORTIZATION,
+			   TO_CHAR(sum(D.ACCUMULATED_AMORTIZATION), 'FM999,999,999,999') AS ACCUMULATED_AMORTIZATION,
+			   TO_CHAR(sum(D.BOOK_VALUE_END), 'FM999,999,999,999') AS BOOK_VALUE_END
+		FROM CURRENT_ASSET A,
+			 CURRENT_ASSET_DETAIL D
+		WHERE A.ACCOUNT_CODE = #{accountCode}
+		  AND A.ASSET_CODE = D.ASSET_CODE
+		GROUP BY A.ACCOUNT_CODE, A.ACCOUNT_NAME, A.ASSET_CODE, A.ASSET_NAME
+		]]>
+    </select>
+
+	<!-- 고정자산관리대장 조회 -->
+	<select id="findCurrentAssetLedgerList" resultMap="depreciationResult">
+      <![CDATA[
+		SELECT  DECODE(GROUPING_ID(A.ACCOUNT_CODE,
+								   A.ACCOUNT_NAME,
+								   A.ASSET_CODE,
+								   A.ASSET_NAME,
+								   A.PROGRESS), 7, null, A.ACCOUNT_CODE) AS ACCOUNT_CODE,
+				DECODE(GROUPING_ID(A.ACCOUNT_CODE,
+								   A.ACCOUNT_NAME,
+								   A.ASSET_CODE,
+								   A.ASSET_NAME,
+								   A.PROGRESS), 7, '[ ' || ACCOUNT_NAME || ' 소계 ]', A.ACCOUNT_NAME) AS ACCOUNT_NAME,
+				A.ASSET_CODE,
+				A.ASSET_NAME,
+				A.PROGRESS,
+				TO_CHAR(SUM(D.ACQUISITION_COST), 'FM999,999,999,999') AS ACQUISITION_COST,
+				TO_CHAR(SUM(D.DEPRECIATION), 'FM999,999,999,999') AS DEPRECIATION,
+				TO_CHAR(SUM(D.BOOK_VALUE), 'FM999,999,999,999') AS BOOK_VALUE,
+				TO_CHAR(SUM(D.NORMAL_AMORTIZATION), 'FM999,999,999,999') AS NORMAL_AMORTIZATION,
+				TO_CHAR(SUM(D.ACCUMULATED_AMORTIZATION), 'FM999,999,999,999') AS ACCUMULATED_AMORTIZATION,
+				TO_CHAR(SUM(D.BOOK_VALUE_END), 'FM999,999,999,999') AS BOOK_VALUE_END
+		FROM CURRENT_ASSET A,
+			 CURRENT_ASSET_DETAIL D
+		WHERE A.ASSET_CODE = D.ASSET_CODE
+		GROUP BY ROLLUP (A.ACCOUNT_CODE,
+						 A.ACCOUNT_NAME,
+						 A.ASSET_CODE,
+						 A.ASSET_NAME,
+						 A.PROGRESS)
+		HAVING GROUPING_ID(A.ACCOUNT_CODE,
+						   A.ACCOUNT_NAME,
+						   A.ASSET_CODE,
+						   A.ASSET_NAME,
+						   A.PROGRESS) IN (0, 7)
+		ORDER BY A.ACCOUNT_CODE, A.PROGRESS
+		]]>
+    </select>
+
+</mapper>

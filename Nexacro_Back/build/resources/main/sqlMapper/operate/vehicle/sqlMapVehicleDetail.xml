@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.seoulit.erp.account.operate.vehicle.dao.VehicleDetailDAO">
+
+    <resultMap id="VehicleDetailResult" type="kr.co.seoulit.erp.account.operate.vehicle.entity.VehicleDetailEntity">
+        <result property="vehicleCode" column="VEHICLE_CODE"/>
+        <result property="accountCode" column="ACCOUNT_CODE"/>
+        <result property="accountName" column="ACCOUNT_NAME"/>
+        <result property="assetCode" column="ASSET_CODE"/>
+        <result property="assetName" column="ASSET_NAME"/>
+        <result property="acquisitionDate" column="PROGRESS"/>
+        <result property="acquisitionDate" column="ACQUISITION_DATE"/>
+        <result property="disposalDate" column="DISPOSAL_DATE"/>
+        <result property="expenseCategory" column="EXPENSE_CATEGORY" />
+        <result property="insuranceStatus" column="INSURANCE_STATUS" />
+        <result property="customerCode" column="CUSTOMER_CODE" />
+        <result property="insuranceCompany" column="INSURANCE_COMPANY" />
+        <result property="insuranceStartPeriod" column="INSURANCE_START_PERIOD" />
+        <result property="insuranceEndPeriod" column="INSURANCE_END_PERIOD" />
+        <result property="leaseType" column="LEASE_TYPE" />
+        <result property="leaseStartPeriod" column="LEASE_START_PERIOD" />
+        <result property="leaseEndPeriod" column="LEASE_END_PERIOD" />
+        <result property="usageType" column="USAGE_TYPE" />
+    </resultMap>
+
+    <!-- 업무용차량 상세조회 -->
+    <select id="findVehicleDetail" parameterType="String" resultMap="VehicleDetailResult">
+        <![CDATA[
+        SELECT
+            VEHICLE_CODE,
+            ACCOUNT_CODE,
+            ACCOUNT_NAME,
+            ASSET_CODE,
+            ASSET_NAME,
+            ACQUISITION_DATE,
+            DISPOSAL_DATE,
+            EXPENSE_CATEGORY,
+            INSURANCE_STATUS,
+            CUSTOMER_CODE,
+            INSURANCE_COMPANY,
+            INSURANCE_START_PERIOD,
+            INSURANCE_END_PERIOD,
+            LEASE_TYPE,
+            LEASE_START_PERIOD,
+            LEASE_END_PERIOD,
+            USAGE_TYPE
+        FROM VEHICLE_DETAIL VD
+        WHERE VEHICLE_CODE = #{vehicleCode}
+        ]]>
+    </select>
+
+    <!-- 업무용차량상세 추가 / 수정 -->
+    <update id="mergeVehicleDetail" parameterType="kr.co.seoulit.erp.account.operate.vehicle.entity.VehicleDetailEntity">
+	<![CDATA[
+        MERGE INTO VEHICLE_DETAIL VD
+            USING (SELECT * FROM DUAL)
+            ON (VD.VEHICLE_CODE = #{vehicleCode})
+            WHEN MATCHED THEN
+                UPDATE SET VD.ASSET_CODE = #{assetCode},
+                    VD.ASSET_NAME = #{assetName},
+                    VD.ACQUISITION_DATE = #{acquisitionDate},
+                    VD.DISPOSAL_DATE = #{disposalDate, jdbcType=NULL},
+                    VD.EXPENSE_CATEGORY = #{expenseCategory},
+                    VD.INSURANCE_STATUS = #{insuranceStatus},
+                    VD.CUSTOMER_CODE = #{customerCode, jdbcType=NULL},
+                    VD.INSURANCE_COMPANY = #{insuranceCompany, jdbcType=NULL},
+                    VD.INSURANCE_START_PERIOD = #{insuranceStartPeriod, jdbcType=NULL},
+                    VD.INSURANCE_END_PERIOD = #{insuranceEndPeriod, jdbcType=NULL},
+                    VD.LEASE_TYPE = #{leaseType},
+                    VD.LEASE_START_PERIOD = #{leaseStartPeriod, jdbcType=NULL},
+                    VD.LEASE_END_PERIOD = #{leaseEndPeriod, jdbcType=NULL},
+                    VD.USAGE_TYPE = #{usageType, jdbcType=NULL}
+            WHEN NOT MATCHED THEN
+                INSERT (VD.VEHICLE_CODE, VD.ACCOUNT_CODE, VD.ACCOUNT_NAME, VD.ASSET_CODE
+                    ,VD.ASSET_NAME, VD.ACQUISITION_DATE, VD.DISPOSAL_DATE, VD.EXPENSE_CATEGORY
+                    ,VD.INSURANCE_STATUS, VD.CUSTOMER_CODE, VD.INSURANCE_COMPANY, VD.INSURANCE_START_PERIOD
+                    ,VD.INSURANCE_END_PERIOD, VD.LEASE_TYPE, VD.LEASE_START_PERIOD, VD.LEASE_END_PERIOD
+                    ,VD.USAGE_TYPE)
+                VALUES ( #{vehicleCode}
+                    , #{accountCode}
+                    , #{accountName}
+                    , #{assetCode, jdbcType=NULL}
+                    , #{assetName, jdbcType=NULL}
+                    , #{acquisitionDate}
+                    , #{disposalDate, jdbcType=NULL}
+                    , #{expenseCategory}
+                    , #{insuranceStatus}
+                    , #{customerCode, jdbcType=NULL}
+                    , #{insuranceCompany, jdbcType=NULL}
+                    , #{insuranceStartPeriod, jdbcType=NULL}
+                    , #{insuranceEndPeriod, jdbcType=NULL}
+                    , #{leaseType}
+                    , #{leaseStartPeriod, jdbcType=NULL}
+                    , #{leaseEndPeriod, jdbcType=NULL}
+                    , #{usageType, jdbcType=NULL})
+        ]]>
+  </update>
+
+    <!-- 업무용차량 삭제에 따른 관련 데이터 삭제 -->
+    <delete id="deleteVehicleDetail" parameterType="String">
+        DELETE FROM VEHICLE_DETAIL
+        WHERE VEHICLE_CODE = #{vehicleCode}
+    </delete>
+</mapper>

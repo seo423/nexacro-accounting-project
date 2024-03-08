@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.seoulit.erp.account.operate.system.dao.CustomerDAO">
+
+    <resultMap id="customerResult" type="kr.co.seoulit.erp.account.operate.system.to.CustomerUpdateRequest">
+        <result property="customerCode" column="COMPANY_CODE"/>
+        <result property="workplaceCode" column="WORKPLACE_CODE"/>
+        <result property="customerName" column="CUSTOMER_NAME"/>
+        <result property="customerType" column="CUSTOMER_TYPE"/>
+        <result property="customerCeo" column="CUSTOMER_CEO"/>
+        <result property="businessLicenseNumber" column="BUSINESS_LICENSE_NUMBER"/>
+        <result property="customerBusinessConditions" column="CUSTOMER_BUSINESS_CONDITIONS"/>
+        <result property="customerBusinessItems" column="CUSTOMER_BUSINESS_ITEMS"/>
+        <result property="customerZipCode" column="CUSTOMER_ZIP_CODE"/>
+        <result property="customerBasicAddress" column="CUSTOMER_BASIC_ADDRESS"/>
+        <result property="customerDetailAddress" column="CUSTOMER_DETAIL_ADDRESS"/>
+        <result property="customerTelNumber" column="CUSTOMER_TEL_NUMBER"/>
+        <result property="customerFaxNumber" column="CUSTOMER_FAX_NUMBER"/>
+    </resultMap>
+
+    <insert id="insertCustomer" parameterType="kr.co.seoulit.erp.account.operate.system.to.CustomerUpdateRequest">
+        <![CDATA[
+            INSERT INTO CUSTOMER (CUSTOMER_CODE
+                , CUSTOMER_NAME, CUSTOMER_CEO, CUSTOMER_BUSINESS_CONDITIONS
+                , CUSTOMER_BUSINESS_ITEMS, CUSTOMER_BASIC_ADDRESS, CUSTOMER_TEL_NUMBER)
+            VALUES (#{customerCode}
+                , #{customerName}
+                , #{customerCeo}
+                , #{customerBusinessConditions}
+                , #{customerBusinessItems}
+                , #{customerBasicAddress}
+                , #{customerTelNumber})
+        ]]>
+    </insert>
+
+    <update id="updateCustomer" parameterType="kr.co.seoulit.erp.account.operate.system.to.CustomerUpdateRequest">
+        <![CDATA[
+            UPDATE CUSTOMER SET CUSTOMER_NAME = #{customerName}
+                , CUSTOMER_CEO = #{customerCeo}
+                , CUSTOMER_BUSINESS_CONDITIONS = #{customerBusinessConditions}
+                , CUSTOMER_BUSINESS_ITEMS = #{customerBusinessItems}
+                ,CUSTOMER_BASIC_ADDRESS = #{customerBasicAddress}
+                ,CUSTOMER_TEL_NUMBER = #{customerTelNumber}
+            WHERE CUSTOMER_CODE = #{customerCode}
+        ]]>
+    </update>
+
+    <delete id="deleteCustomer" parameterType="String">
+        <![CDATA[
+            DELETE FROM CUSTOMER
+             WHERE CUSTOMER_CODE = #{customerCode}
+        ]]>
+    </delete>
+
+
+</mapper>

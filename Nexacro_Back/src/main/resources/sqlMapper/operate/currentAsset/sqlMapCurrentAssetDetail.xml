@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.seoulit.erp.account.operate.currentAsset.dao.CurrentAssetDetailDAO">
+
+    <!-- 고정자산 상세 조회 -->
+    <select id="findAssetDetail" parameterType="String" resultType="kr.co.seoulit.erp.account.operate.currentAsset.entity.CurrentAssetDetailEntity">
+      <![CDATA[
+        SELECT ASSET_CODE
+             , ACQUISITION_COST
+             , AMORTIZATION_WAY
+             , DEPARTMENT
+             , DEPRECIATION
+             , BOOK_VALUE
+             , USEFUL_LIFE
+             , AMORTIZATION_FINAL_YEAR
+             , ACQUISITION_QUANTITY
+             , CHANGE_QUANTITY
+             , REMAIN_QUANTITY
+             , AMORTIZATION_RATE
+             , MONTH
+		     , NORMAL_AMORTIZATION
+		     , ACCUMULATED_AMORTIZATION
+		     , BOOK_VALUE_END
+        FROM CURRENT_ASSET_DETAIL
+        WHERE ASSET_CODE = #{assetCode}
+        ]]>
+   </select>
+
+    <!-- 고정자산상세 추가 / 수정 -->
+    <update id="mergeAssetDetail" parameterType="kr.co.seoulit.erp.account.operate.currentAsset.entity.CurrentAssetDetailEntity" >
+    <![CDATA[
+        MERGE INTO CURRENT_ASSET_DETAIL D
+            USING (SELECT * FROM DUAL)
+            ON (D.ASSET_CODE = #{assetCode})
+            WHEN MATCHED THEN
+                UPDATE SET D.DEPARTMENT = #{department}
+                    , D.USEFUL_LIFE = #{usefulLife}
+                    , D.AMORTIZATION_FINAL_YEAR = SUBSTR(#{amortizationFinalYear}, 1, 4)
+                    , D.CHANGE_QUANTITY = #{changeQuantity}
+                    , D.REMAIN_QUANTITY = #{remainQuantity}
+                    , D.AMORTIZATION_RATE = RTRIM(TO_CHAR(#{amortizationRate}, 'FM9990D99'), '.')
+                    , D.NORMAL_AMORTIZATION = #{normalAmortization}
+                    , D.ACCUMULATED_AMORTIZATION = #{accumulatedAmortization}
+                    , D.BOOK_VALUE_END = #{bookValueEnd}
+            WHEN NOT MATCHED THEN
+                INSERT (D.ASSET_CODE, D.ACQUISITION_COST, D.AMORTIZATION_WAY, D.DEPARTMENT
+                        , D.DEPRECIATION, D.BOOK_VALUE, D.USEFUL_LIFE, D.AMORTIZATION_FINAL_YEAR
+                        , D.ACQUISITION_QUANTITY, D.CHANGE_QUANTITY, D.REMAIN_QUANTITY, D.AMORTIZATION_RATE
+                        , D.MONTH, D.NORMAL_AMORTIZATION, D.ACCUMULATED_AMORTIZATION, D.BOOK_VALUE_END)
+                    VALUES (#{assetCode}
+                           , #{acquisitionCost}
+                           , #{amortizationWay}
+                           , #{department}
+                           , #{depreciation}
+                           , #{bookValue}
+                           , #{usefulLife}
+                           , SUBSTR(#{amortizationFinalYear}, 1, 4)
+                           , #{acquisitionQuantity}
+                           , #{changeQuantity}
+                           , #{remainQuantity}
+                           , RTRIM(TO_CHAR(#{amortizationRate}, 'FM9990D99'), '.')
+                           , #{month}
+                           , #{normalAmortization}
+                           , #{accumulatedAmortization}
+                           , #{bookValueEnd})
+        ]]>
+    </update>
+
+    <!-- 고정자산상세 삭제 -->
+    <delete id="deleteAssetDetail" parameterType="String">
+   <![CDATA[
+        DELETE
+        FROM CURRENT_ASSET_DETAIL
+        WHERE ASSET_CODE = #{asset_code}
+        ]]>
+   </delete>
+
+
+
+</mapper>

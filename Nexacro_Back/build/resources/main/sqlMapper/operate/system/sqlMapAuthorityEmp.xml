@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.seoulit.erp.account.operate.system.dao.AuthorityEmpDAO">
+
+
+
+
+    <select id="selectEmpAuthorityList" resultType="kr.co.seoulit.erp.account.operate.system.to.AuthorityEmpBean">
+
+
+        select
+            id as id,
+            emp_name as empName,
+            emp_code as empCode,
+            authority_CODE as authorityCode,
+            authority_name as authorityName,
+            is_authority as isAuthority,
+            authority_level as authorityLevel
+        from AUTHORITY_EMP
+        order by emp_code,authority_code
+
+
+
+    </select>
+
+
+    <select id="selectEmpAuthorityDetailList" parameterType="String" resultType="kr.co.seoulit.erp.account.operate.system.to.AuthorityEmpBean">
+
+        select
+            id as id,
+            emp_name as empName,
+            emp_code as empCode,
+            authority_CODE as authorityCode,
+            authority_name as authorityName,
+            is_authority as isAuthority,
+            authority_level as authorityLevel
+        from AUTHORITY_EMP
+        where emp_code =#{empCode}
+        order by authority_code
+
+    </select>
+
+    <insert id="insertAuthorityEmp" parameterType="kr.co.seoulit.erp.account.operate.system.to.AuthorityEmpBean">
+
+        insert into authority_emp(
+                                  id,
+                                  emp_code,
+                                  emp_name,
+                                  authority_code,
+                                  authority_name)
+        values(authority_emp_seq.nextval,
+               #{empCode},
+               #{empName},
+               #{authorityCode},
+               #{authorityName})
+
+    </insert>
+
+    <delete id="deleteAuthorityEmpDetail" parameterType="String">
+
+        delete AUTHORITY_EMP where id=#{id}
+
+    </delete>
+
+
+
+</mapper>

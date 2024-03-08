@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="kr.co.seoulit.erp.account.statement.monthIncomeStatement.dao.MonthIncomeStatementMapper">
+
+    <resultMap id="MonthIncomeStatementResult" type="kr.co.seoulit.erp.account.statement.monthIncomeStatement.to.MonthIncomeStatementBean">
+        <result property="accountName" column="ACCOUNT_NAME"/>
+        <result property="incomeSummary" column="INCOME_SUMMARY"/>
+    </resultMap>
+
+    <parameterMap id="incomeStatementParams" type="java.util.HashMap">
+        <parameter property="startingDate" jdbcType="VARCHAR" javaType="String" mode="IN"/>
+        <parameter property="endDate" jdbcType="VARCHAR" javaType="String" mode="IN"/>
+        <parameter property="result" jdbcType="CURSOR" javaType="java.sql.ResultSet" mode="OUT" resultMap="MonthIncomeStatementResult"/>
+    </parameterMap>
+
+
+    <select id="selectMonthIncomeStatement" parameterMap="incomeStatementParams" statementType="CALLABLE">
+        <![CDATA[
+        {call P_COMPUTE_MINCOME_STATEMENT(?,?,?)}
+        ]]>
+    </select>
+
+</mapper>
