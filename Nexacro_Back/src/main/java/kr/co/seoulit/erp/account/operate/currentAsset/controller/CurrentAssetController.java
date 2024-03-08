@@ -7,12 +7,13 @@ import kr.co.seoulit.erp.account.operate.currentAsset.to.CurrentAssetDetailResDT
 import kr.co.seoulit.erp.account.operate.currentAsset.to.CurrentAssetReqDTO;
 import kr.co.seoulit.erp.account.operate.currentAsset.to.CurrentAssetResDTO;
 import kr.co.seoulit.erp.account.sys.common.dao.DatasetToBeanMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping("/acc/operate")
 public class CurrentAssetController {
@@ -27,7 +28,7 @@ public class CurrentAssetController {
     public void findAssetList(@RequestAttribute("reqData") PlatformData reqData,
                               @RequestAttribute("resData") PlatformData resData) throws Exception {
 
-        System.out.println("고정자산 조회 Rest API");
+        log.debug("고정자산 조회 Rest API");
         List<CurrentAssetResDTO> currentAssetList = currentAssetService.findAssetList();
         datasetToBeanMapper.beansToDataset(resData, currentAssetList, CurrentAssetResDTO.class);
     }
