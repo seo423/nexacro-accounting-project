@@ -7,6 +7,7 @@ import kr.co.seoulit.erp.account.statement.financialstatements.to.FinancialPosit
 import kr.co.seoulit.erp.account.sys.base.service.BaseService;
 import kr.co.seoulit.erp.account.sys.common.dao.DatasetToBeanMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import com.nexacro.java.xapi.data.PlatformData;
 import kr.co.seoulit.erp.account.statement.trialbalance.service.TrialBalanceService;
 import kr.co.seoulit.erp.account.statement.trialbalance.to.TotalTrialBalanceBean;
 
+@Slf4j
 @RestController
 @RequestMapping("/acc/statement")
 @AllArgsConstructor
@@ -25,56 +27,12 @@ public class TotalTrialBalanceController {
 
 	private final DatasetToBeanMapper datasetToBeanMapper;
 
-	private final BaseService baseService;
-
-
-//	@Autowired
-//	private TrialBalanceService trialBalanceService;
-//	@Autowired
-//	private DatasetToBeanMapper datasetBeanMapper;
-//	@Autowired
-//	private BaseService baseService;
-
-
-//	@PostMapping("/totaltrialbalance")
-//	public HashMap<String, Object> finddoClosing(@RequestParam String accountPeriodNo,
-//			                                     @RequestParam String callResult) {
-//
-//		HashMap<String,Object> params = new HashMap<>();
-//		params.put("accountPeriodNo",accountPeriodNo);
-//		params.put("callResult",callResult);
-//
-//
-//             HashMap<String, Object> closingResult = trialBalanceService.findEarlyStatements(params);
-//
-//           return closingResult;
-//	}
-
-	//@GetMapping("/totaltrialbalance/{accountPeriodNo}")
-
-//	@RequestMapping("/selecttotaltrialbalance")
-//	public void findEarlyStatements( @RequestAttribute("reqData") PlatformData reqData,
-//									 @RequestAttribute("resData") PlatformData resData) throws Exception {
-//
-//		String accountPeriodNo=reqData.getVariable("accountPeriodNo").getString();
-//		String callResult=reqData.getVariable("callresult").getString();
-//
-//
-//		System.out.println("나옴?");
-//
-//		HashMap<String,Object> params = new HashMap<>();
-//		params.put("accountPeriodNo",accountPeriodNo);
-//		params.put("callResult",callResult);
-//
-//		System.out.println("@@@@@@@@@@@@@@@"+params);
-//		ArrayList<TotalTrialBalanceBean> totalTrialBalanceList  = trialBalanceService.findTotalTrialBalance(params);
-//		datasetToBeanMapper.beansToDataset(resData, totalTrialBalanceList, TotalTrialBalanceBean.class);
-//	}
 
 	@RequestMapping("/totaltrialbalance")
 	public void findTotalTrialBalance(@RequestAttribute("reqData") PlatformData reqData,
 									  @RequestAttribute("resData") PlatformData resData) throws Exception {
 
+		log.debug("합계잔액시산표 controller");
 		String accountPeriodNo = reqData.getVariable("period").getString();
 		String callResult = reqData.getVariable("callresult").getString();
 
@@ -98,13 +56,6 @@ public class TotalTrialBalanceController {
 		}
 		//TotalTrialBalanceBean bean=(TotalTrialBalanceBean)trialBalanceService.findTotalTrialBalance(params).get("totalTrialBalanceResult")
 	}
-
-
-//	@PostMapping("/totaltrialbalancecancle")
-//	public void findcancelClosing(@RequestParam String accountPeriodNo,
-//										  @RequestParam String callResult) {
-//
-//		trialBalanceService.findchangeAccountingSettlement(accountPeriodNo, callResult);
-//	}
+	
 
 }
