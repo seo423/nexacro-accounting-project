@@ -31,6 +31,8 @@
     <p><strong>Frontend</strong></p>
     <div>
         <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white">
+        ![image](https://github.com/seo423/nexacro-accounting-project/assets/136302997/71165e6a-7918-40b0-826c-1ac1abbee47a)
+
     </div>    
     <!-- Backend -->
     <p><strong>Backend</strong></p>
