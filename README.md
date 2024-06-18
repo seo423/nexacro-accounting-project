@@ -30,9 +30,10 @@
     <!-- Frontend -->
     <p><strong>Frontend</strong></p>
     <div>
-        <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"><br/>
-        ![image](https://github.com/seo423/nexacro-accounting-project/assets/136302997/f92fd89e-257b-48ad-a354-53ffac97fb5e)
+        <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white">
     </div>
+    ![image](https://github.com/seo423/nexacro-accounting-project/assets/136302997/f92fd89e-257b-48ad-a354-53ffac97fb5e)
+    
     <!-- Backend -->
     <p><strong>Backend</strong></p>
     <div>
