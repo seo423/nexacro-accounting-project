@@ -62,7 +62,7 @@
 
 
 ## What is Nexacro Platform?
-* Nexacro platform is a software development toolkit from South Korea, designed for building advanced web and mobile applications. It provides developers with tools to create user interfaces, manage data, and integrate with backend systems efficiently. It's tailored for enterprise use, offering features like multi-environment deployment and strong security, making it suitable for large-scale business applications across various industries.
+> #### Nexacro platform is a software development toolkit from South Korea, designed for building advanced web and mobile applications. It provides developers with tools to create user interfaces, manage data, and integrate with backend systems efficiently. It's tailored for enterprise use, offering features like multi-environment deployment and strong security, making it suitable for large-scale business applications across various industries.
 
 
 # Getting started
